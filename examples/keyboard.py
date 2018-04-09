@@ -139,7 +139,7 @@ atexit.register(GPIO.cleanup)
 cap.touched()
 pressed = dict()
 for pin, key in KEY_MAPPING.iteritems():
-    dict[key] = False
+    pressed[key] = False
 
 # Event loop to wait for IRQ pin changes and respond to them.
 print('Press Ctrl-C to quit.')
