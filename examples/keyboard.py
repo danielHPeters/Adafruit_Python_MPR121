@@ -71,22 +71,36 @@ import time
 import Adafruit_MPR121.MPR121 as MPR121
 import RPi.GPIO as GPIO
 import uinput
+import pyautogui
 
 
 # Define mapping of capacitive touch pin presses to keyboard button presses.
-KEY_MAPPING = {
-                0: uinput.KEY_A,    # Each line here should define a dict entry
-                1: uinput.KEY_S,     # that maps the capacitive touch input number
-                2: uinput.KEY_D,     # to an appropriate key press.
-                3: uinput.KEY_F,     #
-                4: uinput.KEY_G,     # For reference the list of possible uinput.KEY_*
-                5: uinput.KEY_H,     # values you can specify is defined in linux/input.h:
-                6: uinput.KEY_J,     # http://www.cs.fsu.edu/~baker/devices/lxr/http/source/linux/include/linux/input.h?v=2.6.11.8
-                7: uinput.KEY_K,
-                8: uinput.KEY_Q,
-                9: uinput.KEY_W
-              }                      # Make sure a cap touch input is defined only
+#KEY_MAPPING = {
+ #               0: uinput.KEY_A,    # Each line here should define a dict entry
+  #              1: uinput.KEY_S,     # that maps the capacitive touch input number
+   #             2: uinput.KEY_D,     # to an appropriate key press.
+    #            3: uinput.KEY_F,     #
+    #           4: uinput.KEY_G,     # For reference the list of possible uinput.KEY_*
+    #            5: uinput.KEY_H,     # values you can specify is defined in linux/input.h:
+ #               6: uinput.KEY_J,     # http://www.cs.fsu.edu/~baker/devices/lxr/http/source/linux/include/linux/input.h?v=2.6.11.8
+ #               7: uinput.KEY_K,
+  #              8: uinput.KEY_Q,
+   #             9: uinput.KEY_W
+    #          }                      # Make sure a cap touch input is defined only
                                      # once or else the program will fail to run!
+
+KEY_MAPPING = {
+    0: 'a',
+    1: 's',
+    2: 'd',
+    3: 'f',
+    4: 'g',
+    5: 'h',
+    6: 'j',
+    7: 'k',
+    8: 'q',
+    9: 'w'
+}
 
 # Input pin connected to the capacitive touch sensor's IRQ output.
 # For the capacitive touch HAT this should be pin 26!
@@ -99,7 +113,7 @@ EVENT_WAIT_SLEEP_SECONDS = 0.1
 
 
 # Uncomment to enable debug message logging (might slow down key detection).
-#logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 # Make sure uinput kernel module is loaded.
 subprocess.check_call(['modprobe', 'uinput'])
@@ -123,11 +137,12 @@ atexit.register(GPIO.cleanup)
 
 # Clear any pending interrupts by reading touch state.
 cap.touched()
+pressed = dict()
 
 # Event loop to wait for IRQ pin changes and respond to them.
 print('Press Ctrl-C to quit.')
 while True:
-    # Wait for the IRQ pin to drop or too much time ellapses (to help prevent
+    # Wait for the IRQ pin to drop or too much time elapses (to help prevent
     # missing an IRQ event and waiting forever).
     start = time.time()
     while (time.time() - start) < MAX_EVENT_WAIT_SECONDS and not GPIO.event_detected(IRQ_PIN):
@@ -141,4 +156,8 @@ while True:
         if touched & pin_bit:
             # Emit key event when touched.
             logging.debug('Input {0} touched.'.format(pin))
-            device.emit_click(key)
+            if pressed.get(key) is False:
+                pyautogui.keyDown(key)
+                # device.emit_click(key)
+            else:
+                pyautogui.keyUp(key)
