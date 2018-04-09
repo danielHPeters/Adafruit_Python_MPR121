@@ -138,6 +138,8 @@ atexit.register(GPIO.cleanup)
 # Clear any pending interrupts by reading touch state.
 cap.touched()
 pressed = dict()
+for pin, key in KEY_MAPPING.iteritems():
+    dict[key] = False
 
 # Event loop to wait for IRQ pin changes and respond to them.
 print('Press Ctrl-C to quit.')
@@ -157,7 +159,9 @@ while True:
             # Emit key event when touched.
             logging.debug('Input {0} touched.'.format(pin))
             if pressed.get(key) is False:
+                pressed[key] = True
+            # device.emit_click(key)
                 pyautogui.keyDown(key)
-                # device.emit_click(key)
-            else:
-                pyautogui.keyUp(key)
+        else:
+            pyautogui.keyUp(key)
+            pressed[key] = False
