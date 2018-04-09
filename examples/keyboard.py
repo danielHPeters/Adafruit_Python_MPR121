@@ -119,7 +119,7 @@ EVENT_WAIT_SLEEP_SECONDS = 0.1
 subprocess.check_call(['modprobe', 'uinput'])
 
 # Configure virtual keyboard.
-device = uinput.Device(KEY_MAPPING.values())
+# device = uinput.Device(KEY_MAPPING.values())
 
 # Setup the MPR121 device.
 cap = MPR121.MPR121()
