@@ -73,33 +73,14 @@ import RPi.GPIO as GPIO
 import uinput
 import pyautogui
 
-
-# Define mapping of capacitive touch pin presses to keyboard button presses.
-#KEY_MAPPING = {
- #               0: uinput.KEY_A,    # Each line here should define a dict entry
-  #              1: uinput.KEY_S,     # that maps the capacitive touch input number
-   #             2: uinput.KEY_D,     # to an appropriate key press.
-    #            3: uinput.KEY_F,     #
-    #           4: uinput.KEY_G,     # For reference the list of possible uinput.KEY_*
-    #            5: uinput.KEY_H,     # values you can specify is defined in linux/input.h:
- #               6: uinput.KEY_J,     # http://www.cs.fsu.edu/~baker/devices/lxr/http/source/linux/include/linux/input.h?v=2.6.11.8
- #               7: uinput.KEY_K,
-  #              8: uinput.KEY_Q,
-   #             9: uinput.KEY_W
-    #          }                      # Make sure a cap touch input is defined only
-                                     # once or else the program will fail to run!
-
 KEY_MAPPING = {
-    0: 'a',
-    1: 's',
-    2: 'd',
-    3: 'f',
-    4: 'g',
-    5: 'h',
-    6: 'j',
-    7: 'k',
-    8: 'q',
-    9: 'w'
+    0: 'w',
+    1: 'a',
+    2: 's',
+    3: 'd',
+    4: 'shift',
+    5: 'space',
+    6: 'enter'
 }
 
 # Input pin connected to the capacitive touch sensor's IRQ output.
@@ -110,7 +91,6 @@ IRQ_PIN = 26
 # adjust the load on the CPU vs. responsiveness of the key detection.
 MAX_EVENT_WAIT_SECONDS = 0.5
 EVENT_WAIT_SLEEP_SECONDS = 0.1
-
 
 # Uncomment to enable debug message logging (might slow down key detection).
 # logging.basicConfig(level=logging.DEBUG)
@@ -123,10 +103,10 @@ subprocess.check_call(['modprobe', 'uinput'])
 
 # Setup the MPR121 device.
 cap = MPR121.MPR121()
-# if not cap.begin():
-#    print('Failed to initialize MPR121, check your wiring!')
-#    sys.exit(1)
-cap.begin(address=0x5C)
+if not cap.begin(address=0x5C)
+    print('Failed to initialize MPR121, check your wiring!')
+    sys.exit(1)
+
 # Configure GPIO library to listen on IRQ pin for changes.
 # Be sure to configure pin with a pull-up because it is open collector when not
 # enabled.
@@ -159,9 +139,10 @@ while True:
             # Emit key event when touched.
             logging.debug('Input {0} touched.'.format(pin))
             if pressed.get(key) is False:
-                pressed[key] = True
-            # device.emit_click(key)
                 pyautogui.keyDown(key)
+				# Remember pressed key.
+                pressed[key] = True
         else:
             pyautogui.keyUp(key)
+			# Mark key as not pressed.
             pressed[key] = False
