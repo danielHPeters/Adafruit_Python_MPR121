@@ -9,3 +9,9 @@ Adafruit invests time and resources providing this open source code, please supp
 
 Written by Tony DiCola for Adafruit Industries.
 MIT license, all text above must be included in any redistribution
+
+### Setup
+1. Set up Raspberry Pi according to documentation.
+2. Install library with termminal using ´sudo python setup.py´ in Project root.
+3. Switch to the examples folder in terminal and run ´sudo python musicboard.py´ to start setup for dank-studio.
+or ´sudo python gamekeys.py´ to start the application with game keys mappings (WASD, shift, space, enter)
