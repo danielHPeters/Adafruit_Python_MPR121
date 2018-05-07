@@ -106,7 +106,7 @@ subprocess.check_call(['modprobe', 'uinput'])
 
 # Setup the MPR121 device.
 cap = MPR121.MPR121()
-if not cap.begin(address=0x5C)
+if not cap.begin(address=0x5C):
     print('Failed to initialize MPR121, check your wiring!')
     sys.exit(1)
 
